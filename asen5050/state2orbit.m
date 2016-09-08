@@ -20,15 +20,15 @@ function elements = state2orbit(R,V,mu)
 %       alt_max = maximum altitude above surface [km]
 %       alt_min = minimum altitude above surface [km]
 %       energy = specific energy per unit mass of satellite
+%       h = magnitude of specific angular momentum vector
 %       hx = x component of specific angular momentum vector
 %       hy = y component of specific angular momentum vector
 %       hz = z component of specific angular momentum vector
-%       h = magnitude of specific angular momentum vector
 %       phi_fpa = flight path angle [rad]
 %       r = magnitude of position vector
 %       v = magnitude of velocity vector
 % USAGE
-%   elements = state2elms(R,V)
+%   elements = state2elms(R,V,398600.44)
 
 if (length(R) ~= 3 || length(V) ~= 3)
     printf('ERROR: Inputs need to be vectors of length 3!\n');
@@ -73,15 +73,15 @@ if (v_r >= 0)
 else
     theta = 2*pi - acos(dot(E/e,R/r));
 end
-% Calculate other anomalies and time past periapsis
-[~,ecc,mean,t_p]=anomalies(true,'true',a,e,mu);
-
 % Calculate energy per unit mass
-energy = v^2/2 - mu/r;
-% Calculate semimajor axis, orbital period, and semilatus rectum
+energy = v^2/2 - mu/r;      % [km^2/s^2]
+% Calculate semimajor axis, orbital period, semiparameter, and mean motion
 p = h^2/mu;         % semilatus rectum [km]
 a = p/(1-e^2);      % semimajor axis [km]
 T = 2*pi*sqrt(a^3/mu);      % orbital period [s]
+n = 2*pi/T;
+% Calculate other anomalies and time past periapsis
+[~,ecc,mean,t_p]=anomalies(theta,'true',a,e,mu);
 % Calculate flight path angle
 cos_phi = h/(r*v);
 if (true > pi)
@@ -89,6 +89,20 @@ if (true > pi)
 else
     phi_fpa = acos(cos_phi);
 end
+% Calculate radius of apoapsis and periapsis, as well as max and min alt
+r_a = a*(1+e);
+alt_max = r_a - RE;
+r_p = a*(1-e);
+alt_min = r_p - RE;
+
+% Write characteristics to structure
+elements = struct('a',a,'e',e,'i',i,...
+    'raan',Omega,'omega',omega,'true',theta,'mean',mean,...
+    'ecc',ecc,'t_p',t_p,'P',T,'p',p,'n',n,'r_a',r_a,'r_p',r_p,...
+    'alt_max',alt_max,'alt_min',alt_min,'energy',energy,...
+    'h',h,'hx',hx,'hy',hy,'hz',hz,'phi_fpa',phi_fpa,...
+    'r',r,'rx',R(1),'ry',R(2),'rz',R(3),'v',v,'vx',V(1),'vy',V(2),...
+    'vz',V(3),'mu',mu);
 
 end
 

@@ -1,4 +1,4 @@
-function [true,ecc,mean,time,r] = anomalies(value,unit,a,e,mu)
+function [true,ecc,mean,time,r] = anomalies(value,unit,a,e,mu,deg)
 % Given the value of true anomaly, eccentric anomaly, mean anomaly, or time
 % (including its unit) return the vector of all four values given the
 % semimajor axis, eccentricity, and gravitational parameter of the orbit.
@@ -38,9 +38,17 @@ if (strcmp(unit,'true'))
     sin_E = (sin(true)*sqrt(1-e^2))/(1+e*cos(true));
     cos_E = (e+cos(true))/(1+e*cos(true));
     ecc = atan2(sin_E,cos_E);     % atan2 finds the correct quadrant
+    if (ecc < 0) 
+        ecc = 2*pi + ecc;
+    end
     mean = ecc - e*sin(ecc);       % Kepler's equation to get mean anomaly
     time = mean/n;
     r = a*(1 - e*cos(ecc));      % magnitude of position vector
+    if(deg)
+        true = rad2deg(true);
+        mean = rad2deg(mean);
+        ecc = rad2deg(ecc);
+    end
 elseif (strcmp(unit,'ecc'))
     % Given eccentric anomaly
     ecc = deg2rad(value);
@@ -50,9 +58,17 @@ elseif (strcmp(unit,'ecc'))
     sin_T = (sin(ecc)*sqrt(1-e^2))/(1-e*cos(ecc));
     cos_T = (cos(ecc) - e)/(1 - e*cos(ecc));
     true = atan2(sin_T,cos_T);
+    if (true < 0) 
+        true = 2*pi + true;
+    end
+    if(deg)
+        true = rad2deg(true);
+        mean = rad2deg(mean);
+        ecc = rad2deg(ecc);
+    end
 elseif (strcmp(unit,'mean'))
     % Given mean anomaly
-    mean = value;
+    mean = deg2rad(value);
     time = mean/n;     % trivial conversion to time past periapsis
     % Newton Raphson method
     % Initial guess E = M (first iteration)
@@ -64,12 +80,23 @@ elseif (strcmp(unit,'mean'))
     Eprev = -1e3;
     for i = 1:1e9
         ecc = ecc + (mean-ecc+e*sin(ecc)) ./ (1-e*cos(ecc));
-        if (abs(ecc-Eprev) <= tolerance)
+        if (abs(ecc-Eprev) <= 0.00001)
             break
         end
         Eprev = ecc;
     end
     r = a*(1 - e*cos(ecc));      % magnitude of position vector
+    sin_T = (sin(ecc)*sqrt(1-e^2))/(1-e*cos(ecc));
+    cos_T = (cos(ecc) - e)/(1 - e*cos(ecc));
+    true = atan2(sin_T,cos_T);
+    if (true < 0) 
+        true = 2*pi + true;
+    end
+    if(deg)
+        true = rad2deg(true);
+        mean = rad2deg(mean);
+        ecc = rad2deg(ecc);
+    end
 elseif (strcmp(unit,'time'))
     % Given time past periapsis
     time = value;
@@ -84,12 +111,23 @@ elseif (strcmp(unit,'time'))
     Eprev = -1e3;
     for i = 1:1e9
         ecc = ecc + (mean-ecc+e*sin(ecc)) ./ (1-e*cos(ecc));
-        if (abs(ecc-Eprev) <= tolerance)
+        if (abs(ecc-Eprev) <= 0.00001)
             break
         end
         Eprev = ecc;
     end
+    sin_T = (sin(ecc)*sqrt(1-e^2))/(1-e*cos(ecc));
+    cos_T = (cos(ecc) - e)/(1 - e*cos(ecc));
+    true = atan2(sin_T,cos_T);
+    if (true < 0) 
+        true = 2*pi + true;
+    end
     r = a*(1 - e*cos(ecc));      % magnitude of position vector
+    if(deg)
+        true = rad2deg(true);
+        mean = rad2deg(mean);
+        ecc = rad2deg(ecc);
+    end
 else
     % Invalid input argument
     printf('Invalid input unit: '+unit+'\n');
