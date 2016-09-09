@@ -1,7 +1,12 @@
 function [true,ecc,mean,time,r] = anomalies(value,unit,a,e,mu,deg)
-% Given the value of true anomaly, eccentric anomaly, mean anomaly, or time
-% (including its unit) return the vector of all four values given the
-% semimajor axis, eccentricity, and gravitational parameter of the orbit.
+%BEGINHEADER
+% state2orbit.m
+% USAGE
+%   [true,ecc,mean,time]=anomalies(25,'true',15000,0.1,398600.44)
+% DESCRIPTION
+%   Given the value of true anomaly, eccentric anomaly, mean anomaly, or time
+%   (including its unit) return the vector of all four values given the
+%   semimajor axis, eccentricity, and gravitational parameter of the orbit.
 % INPUTS
 %   value = the decimal value of one of the anomalies or time past
 %   periapsis in degrees or seconds, respectively
@@ -10,14 +15,15 @@ function [true,ecc,mean,time,r] = anomalies(value,unit,a,e,mu,deg)
 %   a = the semimajor axis of the orbit in kilometers
 %   e = the eccentricity of the orbit
 %   mu = the gravitational parameter of the central body in km^3/s^2
+%   deg = if set to a none zero/null value, returns results in degrees
+%         instead of radians
 % OUTPUTS
 %   true = true anomaly [deg]
 %   ecc = eccentric anomaly [deg]
 %   mean = mean anomaly [deg]
 %   time = time past periapsis [s]
 %   r = radius (magnitude of position vector) [km]
-% USAGE
-%   [true,ecc,mean,time]=anomalies(25,'true',15000,0.1,398600.44)
+%ENDHEADER
 
 %% Interpret input unit and perform initial calculations
 unit = lower(unit);

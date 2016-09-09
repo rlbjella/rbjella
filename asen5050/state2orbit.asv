@@ -1,13 +1,6 @@
 function elements = state2orbit(R,V,mu,deg)
-%BEGINHEADER
-% state2orbit.m
-% USAGE
-%   elements = state2elms(R,V,398600.44)
+
 % DESCRIPTION
-%   Given a position vector and a velocity vector of a satellite, and the
-%   gravitational parameter of the central body, returns a MATLAB structure 
-%   containing a variety of orbital characteristics, including the
-%   classical orbital elements.
 % INPUTS
 %   R = position vector (X,Y,Z) [km]
 %   V = velocity vector (Vx,Vy,Vz) [km]
@@ -37,7 +30,8 @@ function elements = state2orbit(R,V,mu,deg)
 %       phi_fpa = flight path angle [rad]
 %       r = magnitude of position vector [km]
 %       v = magnitude of velocity vector [km/s]
-%ENDHEADER
+% USAGE
+%   elements = state2elms(R,V,398600.44)
 
 if (length(R) ~= 3 || length(V) ~= 3)
     printf('ERROR: Inputs need to be vectors of length 3!\n');
