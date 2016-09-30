@@ -1,9 +1,9 @@
-#!/usr/bin/env python3
+#!/bin/bash
 #BEGINHEADER
 # SOURCE
-#   $.py
+#   $.sh
 # USAGE
-#   % python3 $.py $1 $2
+#   % ./*.sh $1 $2
 # DESCRIPTION
 #   
 # INPUTS
